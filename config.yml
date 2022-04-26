@@ -1,0 +1,10 @@
+appName: RoutingService
+logLevel: WARN
+
+DEBUG: True
+TESTING: True
+
+database:
+  mongo:
+    dsn: mongodb://localhost:27017
+    name: routes
