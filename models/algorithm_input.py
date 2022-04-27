@@ -21,6 +21,6 @@ class DurationMatrix(EmbeddedDocument):
 
 
 class AlgorithmInput(Document):
-    vehicles = ListField(EmbeddedDocumentField(Vehicle))
-    jobs = ListField(EmbeddedDocumentField(Job))
-    matrix = ListField(EmbeddedDocumentField(DurationMatrix))
+    vehicles = ListField(EmbeddedDocumentField(Vehicle), required=True)
+    jobs = ListField(EmbeddedDocumentField(Job), required=True)
+    matrix = ListField(EmbeddedDocumentField(DurationMatrix), required=True)
