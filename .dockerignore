@@ -1,0 +1,4 @@
+mongodb
+venv
+Dockerfile
+docker-compose.yml

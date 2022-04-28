@@ -2,11 +2,14 @@ appName: RoutingService
 logLevel: WARN
 
 DEBUG: True
-TESTING: True
+TESTING: False
+
+HOST: 0.0.0.0
+PORT: 5000
 
 database:
   mongo:
-    dsn: mongodb://localhost:27017/routes
+    dsn: mongodb://mongo:27017/routes
     name: routes
 
 solver:

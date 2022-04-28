@@ -39,7 +39,7 @@ def initialize():
 
 def start_app():
     initialize()
-    app.run()
+    app.run(host=config_parser()['HOST'], port=int(config_parser()['PORT']))
 
 
 if __name__ == '__main__':

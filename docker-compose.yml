@@ -1,0 +1,36 @@
+version: '3.5'
+services:
+  routing_service:
+    hostname: 0.0.0.0
+    build: .
+    container_name: routing_service
+    volumes:
+      - .:/app
+    healthcheck:
+      test: echo 'db.runCommand({serverStatus:1}).ok' | grep 1
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    ports:
+      - "5000:5000"
+    restart: always
+    depends_on:
+      - mongo
+
+  mongo:
+    hostname: 0.0.0.0
+    container_name: db
+    image: mongo:4.4
+    healthcheck:
+      test: echo 'db.runCommand({serverStatus:1}).ok' | grep 1
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    volumes:
+      - ./mongodb/data/db:/data/db
+      - ./mongodb/data/configdb:/data/configdb
+    expose:
+      - 27017
+    ports:
+      - "27017:27017"
+    restart: always
