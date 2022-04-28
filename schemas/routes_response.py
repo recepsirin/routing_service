@@ -11,8 +11,7 @@ class Route(BaseSchema):
 class RoutesResponseSchema(BaseSchema):
     total_delivery_duration = fields.Int(required=True, allow_none=False,
                                          default=0)
-    routes = fields.Dict(fields.Dict(fields.Pluck(fields.Nested(Route),
-                                                  field_name="id"), many=True))
+    routes = fields.Dict(value=fields.Nested(Route), many=True)
 
 
 """

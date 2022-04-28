@@ -91,7 +91,7 @@ class ORSOptimizer(BaseRouteOptimizer):
         for v in vehicles:
             if not str(v['id']) in routes['routes']:
                 routes['routes'][str(v['id'])] = {
-                    "items": [],
+                    "jobs": [],
                     "delivery_duration": 0
                 }
         return routes

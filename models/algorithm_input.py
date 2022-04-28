@@ -14,13 +14,7 @@ class Job(EmbeddedDocument):
     service = IntField(required=False)
 
 
-class DurationMatrix(EmbeddedDocument):
-    duration_matrix = ListField(EmbeddedDocumentField(ListField,
-                                                      required=True),
-                                required=True)
-
-
 class AlgorithmInput(Document):
     vehicles = ListField(EmbeddedDocumentField(Vehicle), required=True)
     jobs = ListField(EmbeddedDocumentField(Job), required=True)
-    matrix = ListField(EmbeddedDocumentField(DurationMatrix), required=True)
+    matrix = ListField(ListField(), required=True)
