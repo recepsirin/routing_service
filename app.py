@@ -1,31 +1,21 @@
-import logging
-import yaml
 from flask import Flask
 from flask_mongoengine import MongoEngine
 from flask_restful import Api
+
+from utils import config_parser
 
 app = Flask(__name__)
 api = Api(app)
 db = MongoEngine()
 
 
-def __parser():
-    config = dict()
-    with open("config.yml", 'r') as f:
-        try:
-            config = yaml.safe_load(f)
-        except yaml.YAMLError as exc:
-            logging.error(exc)
-    return config
-
-
 def initialize_app_config(app):
-    app.config['TESTING'] = __parser()['TESTING']
-    app.config['DEBUG'] = __parser()['DEBUG']
+    app.config['TESTING'] = config_parser()['TESTING']
+    app.config['DEBUG'] = config_parser()['DEBUG']
     app.config['MONGODB_SETTINGS'] = {
-        'host': __parser()['database']['mongo']['dsn']
+        'host': config_parser()['database']['mongo']['dsn']
     }
-    app.config['MONGODB_DB'] = __parser()['database']['mongo']['name']
+    app.config['MONGODB_DB'] = config_parser()['database']['mongo']['name']
 
 
 def initialize_db(app):

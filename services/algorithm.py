@@ -1,12 +1,13 @@
 import logging
 from abc import ABC, abstractmethod
-from urllib.error import HTTPError
 
 from openrouteservice import Client
 from openrouteservice.optimization import Vehicle, Job
 
+from utils import config_parser
 
-class BaseAlgorithm(ABC):
+
+class BaseRouteOptimizer(ABC):
 
     @abstractmethod
     def run(self):
@@ -17,28 +18,37 @@ class BaseAlgorithm(ABC):
         pass
 
 
-class Solution1(BaseAlgorithm):
-    # @TODO Apply naming convention
+class ORSOptimizer(BaseRouteOptimizer):
     """
+    ORS optimization API
     Vehicle Routing Problem with Roaming Delivery Location and
     Stochastic Travel Times (VRPRDL-S)
     """
 
     def __init__(self, vrp_inputs, timeout=60, retry_timeout=60):
-        self._client = Client("key", timeout=timeout,
+        __api_key = config_parser()['solver']['APIs']['openrouteservice'][
+            'key']
+        self._client = Client(key=__api_key,
+                              timeout=timeout,
                               retry_timeout=retry_timeout)
         self.inputs = vrp_inputs
 
     @property
     def vehicles(self):
-        return [Vehicle(id=v['id'], start_index=v['start_index'],
-                        capacity=v['capacity'])
+        if all([i.get('capacity') for i in self.inputs['vehicles']]):
+            return [Vehicle(id=v['id'], start_index=v['start_index'],
+                            capacity=v['capacity'])
+                    for v in self.inputs['vehicles']]
+        return [Vehicle(id=v['id'], start_index=v['start_index'])
                 for v in self.inputs['vehicles']]
 
     @property
     def jobs(self):
-        return [Job(id=j['id'], location_index=j['location_index'],
-                    service=j['service']) for j in self.inputs['jobs']]
+        if all([i.get('service') for i in self.inputs['jobs']]):
+            return [Job(id=j['id'], location_index=j['location_index'],
+                        service=j['service']) for j in self.inputs['jobs']]
+        return [Job(id=j['id'], location_index=j['location_index'])
+                for j in self.inputs['jobs']]
 
     @property
     def duration_matrix(self):
@@ -49,17 +59,14 @@ class Solution1(BaseAlgorithm):
             response = self._client.optimization(jobs=self.jobs,
                                                  vehicles=self.vehicles,
                                                  matrix=self.duration_matrix)
-        except HTTPError as err:
-            # Todo Customize error-handling for HTTP Errors
-            # err.code 400 sent missing/improper data
-            logging.exception(err)
-            raise err
         except Exception as e:
             logging.exception(e)
-            raise e
+            return e
         parsed_response = self.parse(response)
-        # @ TODO set_empty_routes
-        return parsed_response
+        convenient_data = self.set_empty_routes(
+            vehicles=self.inputs['vehicles'],
+            routes=parsed_response)
+        return convenient_data
 
     def parse(self, response):
         parsed_data = dict()
@@ -78,9 +85,30 @@ class Solution1(BaseAlgorithm):
                         'jobs'].append(str(job['id']))
         return parsed_data
 
-    def set_empty_routes(self, vehicles, routes):
-        pass
+    @staticmethod
+    def set_empty_routes(vehicles, routes):
+        """Sets empty routes for API's response convenience"""
+        for v in vehicles:
+            if not str(v['id']) in routes['routes']:
+                routes['routes'][str(v['id'])] = {
+                    "items": [],
+                    "delivery_duration": 0
+                }
+        return routes
+
+
+class Algorithms(object):
+    ors = ORSOptimizer  # consumes openrouteservice's api
+    # other algorithms/solvers/optimizers here: cvrp, vrptw and etc..
 
 
 class AlgorithmService(object):
-    pass
+
+    def calculate_routes(self, algorithm_inputs, algorithm="ors"):
+        _algo_cls_obj = self.__get_an_algorithm(algorithm_inputs, algorithm)
+        return _algo_cls_obj.run()
+
+    @classmethod
+    def __get_an_algorithm(cls, inputs, algorithm):
+        _algo_obj = getattr(Algorithms, algorithm)(cls)
+        return _algo_obj.__class__(inputs)

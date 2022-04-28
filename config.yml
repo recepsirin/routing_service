@@ -8,3 +8,8 @@ database:
   mongo:
     dsn: mongodb://localhost:27017
     name: routes
+
+solver:
+  APIs:
+    openrouteservice:
+      key: 5b3ce3597851110001cf6248b1912bd267da4496b237740d97e32861

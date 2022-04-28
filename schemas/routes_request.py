@@ -20,7 +20,7 @@ class Job(BaseSchema):
     service = fields.Int(required=False, allow_none=True)
 
 
-class AlgorithmRequestSchema(BaseSchema):
+class RoutesRequestSchema(BaseSchema):
     vehicles = fields.List(fields.Nested(Vehicle), required=True)
     jobs = fields.List(fields.Nested(Job), required=True)
     matrix = fields.List(fields.List(fields.Int,  # duration_matrix

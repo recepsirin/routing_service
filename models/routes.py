@@ -12,7 +12,7 @@ class Route(EmbeddedDocument):
     route = DictField(EmbeddedDocumentField(RouteItem), required=True)
 
 
-class AlgorithmOutput(Document):
+class Routes(Document):
     total_delivery_duration = IntField(required=True)
     routes = DictField(EmbeddedDocumentField(Route), required=True)
 
