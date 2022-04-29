@@ -8,7 +8,6 @@ from models.algorithm_input import AlgorithmInput, Vehicle, Job
 class TestAlgorithmInputModel(BaseTestCase):
 
     def test_validation_ok(self):
-        # NOQA  python -m unittest tests.test_models.TestAlgorithmInputModel.test_validation_ok
         validated_input = self.read_mock_data("validated_input")
         algo_input = AlgorithmInput(vehicles=validated_input['vehicles'],
                                     jobs=validated_input['jobs'],
@@ -30,7 +29,6 @@ class TestAlgorithmInputModel(BaseTestCase):
         self.assertIsInstance(validated_input['matrix'][0][0], int)
 
     def test_validation_error(self):
-        # NOQA  python -m unittest tests.test_models.TestAlgorithmInputModel.test_validation_error
         invalidated_input = self.read_mock_data("invalidated_input")
         algo_input = AlgorithmInput(vehicles=invalidated_input['vehicles'],
                                     jobs=invalidated_input['jobs'],

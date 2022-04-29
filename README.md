@@ -8,6 +8,7 @@ duration.
 * #### Python & Flask
 * #### openrouteservice
 * #### MongoDB
+* #### Docker
 
 ---
 
